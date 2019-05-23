@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Game } from "../service/game";
 import { Player } from "../service/players";
-import Card from "../components/Card";
+import { checkHand } from "../service/cards";
+import CardDisplay from "../components/Card";
 
 export default function Main() {
   const [game, setGame] = useState(null);
@@ -25,16 +26,19 @@ export default function Main() {
           <h1>{game.pot}</h1>
           <div className="row">
             {game.tableCards.map(card => (
-              <Card key={card.toString()} card={card} />
+              <CardDisplay key={card.toString()} card={card} />
             ))}
           </div>
           {game.players.map(player => (
             <div key={player.name} className="row">
               <h1>{player.name} </h1>
               <button>Bet 10</button>
+              <button onClick={() => checkHand(player.cards, game.tableCards)}>
+                Check Hand
+              </button>
               <div>
                 {player.cards.map(card => (
-                  <Card key={card.toString()} card={card} />
+                  <CardDisplay key={card.toString()} card={card} />
                 ))}
               </div>
             </div>

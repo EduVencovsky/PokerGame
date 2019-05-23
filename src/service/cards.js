@@ -62,3 +62,29 @@ export const shuffleCards = cards => {
 export const generateShuffledCards = () => {
   return shuffleCards(generateCards());
 };
+
+export const checkHand = (playerCards, tableCards) => {
+  let cards = [...playerCards, ...tableCards];
+  console.log(cards);
+  checkFlush(cards);
+};
+
+export const checkFlush = cards => {
+  // let cards = [...cardsRef];
+  let suitsCount = {
+    club: [],
+    heart: [],
+    spade: [],
+    diamond: []
+  };
+
+  cards.forEach(card => {
+    suitsCount[card.suit].push(card);
+  });
+  console.log("suitsCount", suitsCount);
+  let flushSuit = Object.keys(suitsCount).filter(
+    suit => suitsCount[suit].length >= 5
+  )[0];
+  console.log("flushSuit", flushSuit);
+  return flushSuit ? suitsCount[flushSuit] : false;
+};
