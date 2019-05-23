@@ -4,7 +4,6 @@ export class Player {
     this.chips = chips;
     this.cards = [];
   }
-  receiveCards = cards => {
-    this.cards = cards;
-  };
+
+  receiveOneCard = card => this.cards.push(card);
 }

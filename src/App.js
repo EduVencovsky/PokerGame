@@ -1,13 +1,9 @@
 import React from "react";
-import "./App.css";
 import Main from "./views/Main";
+import "bootstrap/dist/css/bootstrap.css";
 
 function App() {
-  return (
-    <div>
-      <Main />
-    </div>
-  );
+  return <Main />;
 }
 
 export default App;
