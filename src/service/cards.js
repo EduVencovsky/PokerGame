@@ -65,7 +65,7 @@ export const generateShuffledCards = () => {
 
 // Poker Hand Evaluator by Pat Wilson ©2012 (Chrome|IE8|IE9)
 
-hands = [
+const hands = [
   "4 of a Kind",
   "Straight Flush",
   "Straight",
@@ -78,10 +78,10 @@ hands = [
   "Full House",
   "-Invalid-"
 ];
-handRanks = [8, 9, 5, 6, 1, 2, 3, 10, 4, 7, 0];
+const handRanks = [8, 9, 5, 6, 1, 2, 3, 10, 4, 7, 0];
 
 function calcIndex(cs, ss) {
-  var v, i, o, s;
+  let v, i, o, s;
   for (i = -1, v = o = 0; i < 5; i++, o = Math.pow(2, cs[i] * 4)) {
     v += o * (((v / o) & 15) + 1);
   }
@@ -99,7 +99,7 @@ function calcIndex(cs, ss) {
 }
 function getCombinations(k, n) {
   console.log("called getcombinations" + " " + k + " " + n);
-  var result = [],
+  let result = [],
     comb = [];
   function next_comb(comb, k, n, i) {
     if (comb.length === 0) {
@@ -129,7 +129,7 @@ function getCombinations(k, n) {
 }
 function getPokerScore(cs) {
   console.log("called getpokerscore " + cs);
-  var a = cs.slice(),
+  let a = cs.slice(),
     d = {},
     i;
   for (i = 0; i < 5; i++) {
@@ -141,8 +141,8 @@ function getPokerScore(cs) {
   return (a[0] << 16) | (a[1] << 12) | (a[2] << 8) | (a[3] << 4) | a[4];
 }
 function showParsedCards(cs, ss) {
-  var card, i;
-  var suitMap = { "♠": "spades", "♣": "clubs", "♥": "hearts", "♦": "diams" };
+  let card, i;
+  let suitMap = { "♠": "spades", "♣": "clubs", "♥": "hearts", "♦": "diams" };
 
   if (cs !== null && ss !== null) {
     if (cs.length == ss.length) {
@@ -213,7 +213,7 @@ function showParsedCards(cs, ss) {
 }
 
 function rankHand(str) {
-  var index = 10,
+  let index = 10,
     winCardIndexes,
     i,
     e;
@@ -225,20 +225,20 @@ function rankHand(str) {
   if (
     str.match(/((?:\s*)(10|[2-9]|[J|Q|K|A])[♠|♣|♥|♦](?:\s*)){5,7}/g) !== null
   ) {
-    var cardStr = str
+    let cardStr = str
       .replace(/A/g, "14")
       .replace(/K/g, "13")
       .replace(/Q/g, "12")
       .replace(/J/g, "11")
       .replace(/♠|♣|♥|♦/g, ",");
-    var cards = cardStr
+    let cards = cardStr
       .replace(/\s/g, "")
       .slice(0, -1)
       .split(",");
-    var suits = str.match(/♠|♣|♥|♦/g);
+    let suits = str.match(/♠|♣|♥|♦/g);
     if (cards !== null && suits !== null) {
       if (cards.length == suits.length) {
-        var o = {},
+        let o = {},
           keyCount = 0,
           j;
         for (i = 0; i < cards.length; i++) {
@@ -259,18 +259,18 @@ function rankHand(str) {
             for (i = 0; i < suits.length; i++) {
               suits[i] = Math.pow(2, suits[i].charCodeAt(0) % 9824);
             }
-            var c = getCombinations(5, cards.length);
-            var maxRank = 0,
+            let c = getCombinations(5, cards.length);
+            let maxRank = 0,
               winIndex = 10;
             for (i = 0; i < c.length; i++) {
-              var cs = [
+              let cs = [
                 cards[c[i][0]],
                 cards[c[i][1]],
                 cards[c[i][2]],
                 cards[c[i][3]],
                 cards[c[i][4]]
               ];
-              var ss = [
+              let ss = [
                 suits[c[i][0]],
                 suits[c[i][1]],
                 suits[c[i][2]],
@@ -282,11 +282,11 @@ function rankHand(str) {
               if (handRanks[index] > maxRank) {
                 maxRank = handRanks[index];
                 winIndex = index;
-                wci = c[i].slice();
+                var wci = c[i].slice();
               } else if (handRanks[index] == maxRank) {
                 //If by chance we have a tie, find the best one
-                var score1 = getPokerScore(cs);
-                var score2 = getPokerScore([
+                let score1 = getPokerScore(cs);
+                let score2 = getPokerScore([
                   cards[wci[0]],
                   cards[wci[1]],
                   cards[wci[2]],
@@ -294,7 +294,7 @@ function rankHand(str) {
                   cards[wci[4]]
                 ]);
                 if (score1 > score2) {
-                  wci = c[i].slice();
+                  var wci = c[i].slice();
                 }
               }
             }
@@ -303,7 +303,7 @@ function rankHand(str) {
         }
 
         //Show the best cards if cs.length is less than 7 cards.
-        var card;
+        let card;
         if (cards.length <= 7) {
           for (i = 0; i < 7; i++) {
             card = document.getElementById("card" + (i + 1));
@@ -329,7 +329,7 @@ function rankHand(str) {
 }
 
 function inputCardSymbolsOnly(e) {
-  var chrTyped,
+  let chrTyped,
     chrCode = 0,
     evt = e ? e : event;
   if (evt.charCode !== undefined) {
@@ -350,7 +350,7 @@ function inputCardSymbolsOnly(e) {
   //document.getElementById("output").innerHTML += chrCode;
 
   //Setup a collection of substitutions
-  var keyMap = {
+  let keyMap = {
     a: "A",
     k: "K",
     q: "Q",
@@ -381,15 +381,15 @@ function inputCardSymbolsOnly(e) {
     evt.returnValue = false; //Super important do not move!!!
     if (document.selection) {
       //IE
-      var range = document.selection.createRange();
+      let range = document.selection.createRange();
       range.text = keyMap[chrTyped];
       if (evt.preventDefault !== undefined) {
         evt.preventDefault();
       }
       // Chrome + FF
     } else if (e.target.selectionStart || e.target.selectionStart == "0") {
-      var start = evt.target.selectionStart;
-      var end = evt.target.selectionEnd;
+      let start = evt.target.selectionStart;
+      let end = evt.target.selectionEnd;
       evt.target.value =
         evt.target.value.substring(0, start) +
         keyMap[chrTyped] +
@@ -437,7 +437,7 @@ function doRank(e) {
   }, 0);
 }
 
-var isiPad = navigator.userAgent.match(/iPad/i) !== null;
+let isiPad = navigator.userAgent.match(/iPad/i) !== null;
 if (isiPad) {
   document.getElementById("cardInput").type = "tel";
   document.getElementById("output").innerHTML =
