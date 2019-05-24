@@ -72,19 +72,55 @@ export const generateShuffledCards = () => {
   return shuffleCards(generateCards());
 };
 
-export const checkHand = (playerCards, tableCards) => {
+export const checkHand = (playerCards, tableCards = []) => {
   let cards = [...playerCards, ...tableCards];
-  console.log("cards", cards);
+  if (cards.length < 5) {
+    return "Invalid";
+  }
   let flushCards = checkFlush(cards);
   if (flushCards) {
-    let remaingCards = flushCards
+    let topFlushCards = flushCards
       .sort((a, b) => b.value - a.value)
       .splice(0, 5); //get first 5 biggest flush cards
-    console.log("remaingCards", remaingCards);
-    if (checkRoyalFlush(remaingCards)) {
+    if (checkRoyalFlush(topFlushCards)) {
+      console.log(pokerHands[0], topFlushCards);
       return pokerHands[0];
     }
+    if (checkStraight(flushCards)) {
+      console.log(pokerHands[1], flushCards);
+      return pokerHands[1];
+    }
+    console.log(pokerHands[4], topFlushCards);
+    return pokerHands[4];
   }
+};
+
+// Check A K 6 5 4 3 2 Flush case
+export const checkAceEqualsOne = cards => {
+  cards.sort((a, b) => {
+    let valueA = a.value === 14 ? 1 : a.value;
+    return b.value - valueA;
+  });
+  let count = 0;
+  for (let i = 0; i < cards.length - 1; i++) {
+    let valueI = cards[i].value === 14 ? 1 : cards[i].value;
+    let valueI1 = cards[i + 1].value === 14 ? 1 : cards[i + 1].value;
+    count = valueI - valueI1 === 1 ? count + 1 : 0;
+  }
+  return count >= 4;
+};
+
+export const checkStraight = cards => {
+  cards.sort((a, b) => b.value - a.value);
+  // Check A K 6 5 4 3 2 Straight case
+  if (cards[0].value === 14 && cards[1].value !== 13 && cards[2].value !== 12) {
+    return checkAceEqualsOne(cards);
+  }
+  let count = 0;
+  for (let i = 0; i < cards.length - 1; i++) {
+    count = cards[i].value - cards[i + 1].value === 1 ? count + 1 : 0;
+  }
+  return count >= 4;
 };
 
 export const checkRoyalFlush = cards =>

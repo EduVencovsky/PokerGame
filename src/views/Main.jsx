@@ -7,12 +7,15 @@ import CardDisplay from "../components/Card";
 export default function Main() {
   const [game, setGame] = useState(null);
   const [sevenCards, setSevenCards] = useState("");
+  const [pokerHand, setPokerHand] = useState("");
 
   const checkSevenCards = () => {
     let cards = sevenCards
       .split(" ")
       .map(txtCard => new Cards(...txtCard.split("-")));
     console.log(cards);
+    console.log(checkHand(cards));
+    setPokerHand(checkHand(cards));
   };
 
   const startGame = () => {
@@ -32,6 +35,7 @@ export default function Main() {
         />
         <button onClick={checkSevenCards}>Check 7 Cards</button>
       </div>
+      <div>{pokerHand}</div>
       <div>
         <button onClick={startGame}>{game ? "Restart" : "Start"}</button>
       </div>
