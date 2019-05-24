@@ -1,44 +1,53 @@
-export const cardsDisplay = [
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "10",
-  "J",
-  "Q",
-  "K",
-  "A"
+export const pokerHands = [
+  "Royal Flush",
+  "Straight Flush",
+  "Four of a Kind",
+  "Full House",
+  "Flush",
+  "Straight",
+  "Three of a Kind",
+  "Two Pair",
+  "Pair",
+  "High Card"
 ];
 
-export const suits = {
-  club: "♣️",
-  heart: "♥️",
-  spade: "♠️",
-  diamond: "♦️"
+export const cardsValue = {
+  "2": 2,
+  "3": 3,
+  "4": 4,
+  "5": 5,
+  "6": 6,
+  "7": 7,
+  "8": 8,
+  "9": 9,
+  "10": 10,
+  J: 11,
+  Q: 12,
+  K: 13,
+  A: 14
 };
 
-class Cards {
+export const suits = {
+  c: "♣️",
+  h: "♥️",
+  s: "♠️",
+  d: "♦️"
+};
+
+export class Cards {
   constructor(value, suit) {
-    this.value = value;
+    this.value = cardsValue[value];
     this.suit = suit;
-    this.display = cardsDisplay[value - 2];
+    this.display = value + suits[suit];
   }
 
-  toString = () => {
-    return `${this.display}${suits[this.suit]}`;
-  };
+  toString = () => this.display;
 }
 
 export const generateCards = () => {
   let cards = [];
   Object.keys(suits).forEach(suit => {
-    for (let i = 2; i <= 14; i++) {
-      cards.push(new Cards(i, suit));
-    }
+    Object.keys(cardsValue).forEach(x => cards.push(new Cards(x, suit)));
   });
   return cards;
 };
@@ -65,26 +74,39 @@ export const generateShuffledCards = () => {
 
 export const checkHand = (playerCards, tableCards) => {
   let cards = [...playerCards, ...tableCards];
-  console.log(cards);
-  checkFlush(cards);
+  console.log("cards", cards);
+  let flushCards = checkFlush(cards);
+  if (flushCards) {
+    let remaingCards = flushCards
+      .sort((a, b) => b.value - a.value)
+      .splice(0, 5); //get first 5 biggest flush cards
+    console.log("remaingCards", remaingCards);
+    if (checkRoyalFlush(remaingCards)) {
+      return pokerHands[0];
+    }
+  }
 };
 
+export const checkRoyalFlush = cards =>
+  cards[0].value === 14 &&
+  cards[1].value === 13 &&
+  cards[2].value === 12 &&
+  cards[3].value === 11 &&
+  cards[4].value === 10;
+
 export const checkFlush = cards => {
-  // let cards = [...cardsRef];
   let suitsCount = {
-    club: [],
-    heart: [],
-    spade: [],
-    diamond: []
+    c: [],
+    h: [],
+    s: [],
+    d: []
   };
 
   cards.forEach(card => {
     suitsCount[card.suit].push(card);
   });
-  console.log("suitsCount", suitsCount);
   let flushSuit = Object.keys(suitsCount).filter(
     suit => suitsCount[suit].length >= 5
   )[0];
-  console.log("flushSuit", flushSuit);
   return flushSuit ? suitsCount[flushSuit] : false;
 };

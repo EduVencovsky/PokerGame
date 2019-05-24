@@ -1,11 +1,19 @@
 import React, { useState } from "react";
 import { Game } from "../service/game";
 import { Player } from "../service/players";
-import { checkHand } from "../service/cards";
+import { checkHand, Cards } from "../service/cards";
 import CardDisplay from "../components/Card";
 
 export default function Main() {
   const [game, setGame] = useState(null);
+  const [sevenCards, setSevenCards] = useState("");
+
+  const checkSevenCards = () => {
+    let cards = sevenCards
+      .split(" ")
+      .map(txtCard => new Cards(...txtCard.split("-")));
+    console.log(cards);
+  };
 
   const startGame = () => {
     const player1 = new Player("player1");
@@ -18,9 +26,15 @@ export default function Main() {
   return (
     <div className="m-5">
       <div>
+        <input
+          value={sevenCards}
+          onChange={e => setSevenCards(e.target.value)}
+        />
+        <button onClick={checkSevenCards}>Check 7 Cards</button>
+      </div>
+      <div>
         <button onClick={startGame}>{game ? "Restart" : "Start"}</button>
       </div>
-
       {game ? (
         <div>
           <h1>{game.pot}</h1>
