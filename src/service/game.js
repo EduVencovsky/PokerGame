@@ -19,10 +19,19 @@ export class Game {
 
   givePlayersCards = () => {
     for (let i = 0; i < 2; i++) {
-      this.players.map(player => player.receiveOneCard(this.popCards()));
-      this.tableCards.push(this.popCards());
+      this.players.forEach(player => {
+        let card = this.popCards();
+        card.place = "player";
+        player.receiveOneCard(card);
+      });
+      let card = this.popCards();
+      card.place = "table";
+      this.tableCards.push(card);
       this.burnCard();
     }
-    this.popCards(3).map(card => this.tableCards.push(card));
+    this.popCards(3).forEach(card => {
+      card.place = "table";
+      this.tableCards.push(card);
+    });
   };
 }

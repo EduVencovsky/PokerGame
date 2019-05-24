@@ -39,6 +39,7 @@ export class Cards {
     this.value = cardsValue[value];
     this.suit = suit;
     this.display = value + suits[suit];
+    this.place = null;
   }
 
   toString = () => this.display;
@@ -77,11 +78,12 @@ export const checkHand = (playerCards, tableCards = []) => {
   if (cards.length < 5) {
     return "Invalid";
   }
+  console.log("Initial", cards);
   let flushCards = checkFlush(cards);
   if (flushCards) {
     let topFlushCards = flushCards
       .sort((a, b) => b.value - a.value)
-      .splice(0, 5); //get first 5 biggest flush cards
+      .slice(0, 5); //get first 5 biggest flush cards
     if (checkRoyalFlush(topFlushCards)) {
       console.log(pokerHands[0], topFlushCards);
       return pokerHands[0];
@@ -111,6 +113,7 @@ export const checkAceEqualsOne = cards => {
 };
 
 export const checkStraight = cards => {
+  console.log("checkstraight cards", cards);
   cards.sort((a, b) => b.value - a.value);
   // Check A K 6 5 4 3 2 Straight case
   if (cards[0].value === 14 && cards[1].value !== 13 && cards[2].value !== 12) {
