@@ -1,15 +1,15 @@
-export const pokerHands = [
-  "Royal Flush",
-  "Straight Flush",
-  "Four of a Kind",
-  "Full House",
-  "Flush",
-  "Straight",
-  "Three of a Kind",
-  "Two Pair",
-  "Pair",
-  "High Card"
-];
+export const pokerHands = {
+  RoyalFlush: "Royal Flush",
+  StraightFlush: "Straight Flush",
+  FourOfAKind: "Four of a Kind",
+  FullHouse: "Full House",
+  Flush: "Flush",
+  Straight: "Straight",
+  ThreeOfAKind: "Three of a Kind",
+  TwoPair: "Two Pair",
+  Pair: "Pair",
+  HighCard: "High Card"
+};
 
 export const cardsValue = {
   "2": 2,
@@ -86,22 +86,22 @@ export const checkHand = (playerCards, tableCards = []) => {
 
     let royalFlush = checkRoyalFlush(topFlushCards);
     if (royalFlush) {
-      console.log(pokerHands[0], topFlushCards);
-      return [pokerHands[0], royalFlush];
+      console.log(pokerHands.RoyalFlush, topFlushCards);
+      return [pokerHands.RoyalFlush, royalFlush];
     }
     let straightFlush = checkStraight(flushCards);
     if (straightFlush) {
-      console.log(pokerHands[1], flushCards);
-      return [pokerHands[1], straightFlush];
+      console.log(pokerHands.StraightFlush, flushCards);
+      return [pokerHands.StraightFlush, straightFlush];
     }
-    console.log(pokerHands[4], topFlushCards);
-    return [pokerHands[4], topFlushCards];
+    console.log(pokerHands.Flush, topFlushCards);
+    return [pokerHands.Flush, topFlushCards];
   }
 
   let straightCards = checkStraight(cards);
   if (straightCards) {
-    console.log(pokerHands[5], straightCards);
-    return [pokerHands[5], straightCards];
+    console.log(pokerHands.Straight, straightCards);
+    return [pokerHands.Straight, straightCards];
   }
 
   let cardsCount = {};
@@ -119,30 +119,25 @@ export const checkHand = (playerCards, tableCards = []) => {
     return b.length - a.length;
   });
   if (sortedPairs[0].length === 4) {
-    console.log(pokerHands[2], sortedPairs[0]);
-    return [pokerHands[2], sortedPairs[0]];
+    console.log(pokerHands.FourOfAKind, sortedPairs[0]);
+    return [pokerHands.FourOfAKind, sortedPairs[0]];
   } else if (sortedPairs[0].length === 3) {
     if (sortedPairs[1].length === 2) {
-      console.log(pokerHands[3], [...sortedPairs[0], ...sortedPairs[1]]);
-      return [pokerHands[3], [...sortedPairs[0], ...sortedPairs[1]]];
+      console.log(pokerHands.FullHouse, [...sortedPairs[0], ...sortedPairs[1]]);
+      return [pokerHands.FullHouse, [...sortedPairs[0], ...sortedPairs[1]]];
     }
-    console.log(pokerHands[6], sortedPairs[0]);
-    return [pokerHands[6], sortedPairs[0]];
+    console.log(pokerHands.ThreeOfAKind, sortedPairs[0]);
+    return [pokerHands.ThreeOfAKind, sortedPairs[0]];
   } else if (sortedPairs[0].length === 2) {
     if (sortedPairs[1].length === 2) {
-      console.log(pokerHands[7], [...sortedPairs[0], ...sortedPairs[1]]);
-      return [pokerHands[7], [...sortedPairs[0], ...sortedPairs[1]]];
+      console.log(pokerHands.TwoPair, [...sortedPairs[0], ...sortedPairs[1]]);
+      return [pokerHands.TwoPair, [...sortedPairs[0], ...sortedPairs[1]]];
     }
-    console.log(pokerHands[8], sortedPairs[0]);
-    return [pokerHands[8], sortedPairs[0]];
+    console.log(pokerHands.Pair, sortedPairs[0]);
+    return [pokerHands.Pair, sortedPairs[0]];
   }
-  console.log(pokerHands[9], sortedPairs[0]);
-  return [pokerHands[9], sortedPairs[0]];
-  // let fourOfKing = checkFourOfKind(cards);
-};
-
-export const checkSameCards = cards => {
-  // let cards;
+  console.log(pokerHands.HighCard, sortedPairs[0]);
+  return [pokerHands.HighCard, sortedPairs[0]];
 };
 
 /*
@@ -151,7 +146,6 @@ A-c K-c 2-d 3-s 4-c 5-h 7-h
 */
 // Check A K 6 5 4 3 2 Flush case
 export const checkAceEqualsOne = cards => {
-  console.log("checkAceEqualsOne");
   cards.sort((a, b) => {
     let valueA = a.value === 14 ? 1 : a.value;
     let valueB = b.value === 14 ? 1 : b.value;
@@ -167,13 +161,14 @@ export const checkAceEqualsOne = cards => {
     let valueI1 = cards[i].value === 14 ? 1 : cards[i].value;
     if (valueI - valueI1 === 1) {
       countCards.push(cards[i]);
-    } else {
+    } else if (valueI - valueI1 !== 0) {
       countCards = [cards[i]];
     }
   }
   return countCards.length >= 5 ? countCards.splice(0, 5) : false;
 };
 
+// K-c 5-s 2-s 3-d 6-d 4-d 5-h
 export const checkStraight = cards => {
   cards.sort((a, b) => b.value - a.value);
   // Check A K 6 5 4 3 2 Straight case
@@ -189,7 +184,7 @@ export const checkStraight = cards => {
       countCards.push(cards[i]);
     } else if (cards[i - 1].value - cards[i].value === 1) {
       countCards.push(cards[i]);
-    } else {
+    } else if (cards[i - 1].value - cards[i].value !== 0) {
       countCards = [cards[i]];
     }
   }
