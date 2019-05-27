@@ -14,8 +14,9 @@ export default function Main() {
       .split(" ")
       .map(txtCard => new Cards(...txtCard.split("-")));
     console.log(cards);
-    console.log(checkHand(cards));
-    setPokerHand(checkHand(cards));
+    let hand = checkHand(cards);
+    console.log(hand);
+    setPokerHand(hand);
   };
 
   const startGame = () => {
@@ -69,7 +70,9 @@ export default function Main() {
                   <CardDisplay key={card.toString()} card={card} />
                 ))}
               </div>
-              <h4>{JSON.stringify(player.cardsRank)}</h4>
+              <h4>
+                {JSON.stringify(player.cardsRank ? player.cardsRank[0] : "")}
+              </h4>
             </div>
           ))}
         </div>

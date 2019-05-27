@@ -97,6 +97,13 @@ export const checkHand = (playerCards, tableCards = []) => {
     console.log(pokerHands[4], topFlushCards);
     return [pokerHands[4], topFlushCards];
   }
+
+  let straightCards = checkStraight(cards);
+  if (straightCards) {
+    console.log(pokerHands[5], straightCards);
+    return [pokerHands[5], straightCards];
+  }
+
   let cardsCount = {};
   cards.forEach(card => {
     if (cardsCount[card.value]) {
@@ -138,40 +145,55 @@ export const checkSameCards = cards => {
   // let cards;
 };
 
+/*
+A-c K-c 2-d 3-s 4-c 5-h 6-h
+A-c K-c 2-d 3-s 4-c 5-h 7-h
+*/
 // Check A K 6 5 4 3 2 Flush case
 export const checkAceEqualsOne = cards => {
+  console.log("checkAceEqualsOne");
   cards.sort((a, b) => {
     let valueA = a.value === 14 ? 1 : a.value;
-    return b.value - valueA;
+    let valueB = b.value === 14 ? 1 : b.value;
+    return valueB - valueA;
   });
   let countCards = [];
-  for (let i = 0; i < cards.length - 1; i++) {
-    let valueI = cards[i].value === 14 ? 1 : cards[i].value;
-    let valueI1 = cards[i + 1].value === 14 ? 1 : cards[i + 1].value;
+  for (let i = 0; i < cards.length; i++) {
+    if (countCards.length === 0 || i === 0) {
+      countCards.push(cards[i]);
+      continue;
+    }
+    let valueI = cards[i - 1].value === 14 ? 1 : cards[i - 1].value;
+    let valueI1 = cards[i].value === 14 ? 1 : cards[i].value;
     if (valueI - valueI1 === 1) {
       countCards.push(cards[i]);
     } else {
-      countCards = [];
+      countCards = [cards[i]];
     }
   }
-  return countCards.length >= 4 ? countCards : false;
+  return countCards.length >= 5 ? countCards.splice(0, 5) : false;
 };
 
 export const checkStraight = cards => {
   cards.sort((a, b) => b.value - a.value);
   // Check A K 6 5 4 3 2 Straight case
-  if (cards[0].value === 14 && cards[1].value !== 13 && cards[2].value !== 12) {
+  if (
+    cards[0].value === 14 &&
+    (cards[1].value !== 13 || cards[2].value !== 12)
+  ) {
     return checkAceEqualsOne(cards);
   }
   let countCards = [];
-  for (let i = 0; i < cards.length - 1; i++) {
-    if (cards[i].value - cards[i + 1].value === 1) {
+  for (let i = 0; i < cards.length; i++) {
+    if (countCards.length === 0) {
+      countCards.push(cards[i]);
+    } else if (cards[i - 1].value - cards[i].value === 1) {
       countCards.push(cards[i]);
     } else {
-      countCards = [];
+      countCards = [cards[i]];
     }
   }
-  return countCards.length >= 4 ? countCards : false;
+  return countCards.length >= 5 ? countCards.splice(0, 5) : false;
 };
 
 export const checkRoyalFlush = cards =>
