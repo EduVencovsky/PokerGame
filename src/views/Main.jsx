@@ -58,20 +58,13 @@ export default function Main() {
               <button onClick={() => console.log(player.cardsRank)}>
                 Bet 10
               </button>
-              <button
-                onClick={() =>
-                  player.setHandRank(checkHand(player.cards, game.tableCards))
-                }
-              >
-                Check Hand
-              </button>
               <div>
                 {player.cards.map(card => (
                   <CardDisplay key={card.toString()} card={card} />
                 ))}
               </div>
               <h4>
-                {JSON.stringify(player.cardsRank ? player.cardsRank[0] : "")}
+                {JSON.stringify(checkHand(player.cards, game.tableCards)[0])}
               </h4>
             </div>
           ))}
