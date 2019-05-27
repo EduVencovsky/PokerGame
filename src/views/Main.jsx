@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Game } from "../service/game";
 import { Player } from "../service/players";
 import { checkHand, Cards } from "../service/cards";
 import CardDisplay from "../components/Card";
+import io from "socket.io-client";
+
+const socket = io("http://localhost:8080");
 
 export default function Main() {
   const [game, setGame] = useState(null);
   const [sevenCards, setSevenCards] = useState("");
   const [pokerHand, setPokerHand] = useState([]);
+  const [playerCards, setPlayerCards] = useState([]);
 
   const checkSevenCards = () => {
     let cards = sevenCards
@@ -18,6 +22,17 @@ export default function Main() {
     console.log(hand);
     setPokerHand(hand);
   };
+
+  useEffect(() => {
+    socket.emit("gameConnection", { playerName: "Edu" });
+    socket.on("playerId", ({ playerId }) => {
+      console.log(playerId);
+      socket.on("playerCards#" + playerId, ({ cards, chips }) => {
+        console.log(cards);
+        setPlayerCards(cards);
+      });
+    });
+  }, []);
 
   const startGame = () => {
     const player1 = new Player("player1");
