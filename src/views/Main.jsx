@@ -7,7 +7,7 @@ import CardDisplay from "../components/Card";
 export default function Main() {
   const [game, setGame] = useState(null);
   const [sevenCards, setSevenCards] = useState("");
-  const [pokerHand, setPokerHand] = useState("");
+  const [pokerHand, setPokerHand] = useState([]);
 
   const checkSevenCards = () => {
     let cards = sevenCards
@@ -35,7 +35,11 @@ export default function Main() {
         />
         <button onClick={checkSevenCards}>Check 7 Cards</button>
       </div>
-      <div>{pokerHand}</div>
+      <div>
+        {pokerHand.map(card => (
+          <CardDisplay key={card.toString()} card={card} />
+        ))}
+      </div>
       <div>
         <button onClick={startGame}>{game ? "Restart" : "Start"}</button>
       </div>
@@ -50,8 +54,14 @@ export default function Main() {
           {game.players.map(player => (
             <div key={player.name} className="row">
               <h1>{player.name} </h1>
-              <button>Bet 10</button>
-              <button onClick={() => checkHand(player.cards, game.tableCards)}>
+              <button onClick={() => console.log(player.cardsRank)}>
+                Bet 10
+              </button>
+              <button
+                onClick={() =>
+                  player.setHandRank(checkHand(player.cards, game.tableCards))
+                }
+              >
                 Check Hand
               </button>
               <div>
@@ -59,6 +69,7 @@ export default function Main() {
                   <CardDisplay key={card.toString()} card={card} />
                 ))}
               </div>
+              <h4>{JSON.stringify(player.cardsRank)}</h4>
             </div>
           ))}
         </div>

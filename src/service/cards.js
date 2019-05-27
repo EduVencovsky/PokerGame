@@ -76,25 +76,66 @@ export const generateShuffledCards = () => {
 export const checkHand = (playerCards, tableCards = []) => {
   let cards = [...playerCards, ...tableCards];
   if (cards.length < 5) {
-    return "Invalid";
+    return [];
   }
-  console.log("Initial", cards);
   let flushCards = checkFlush(cards);
   if (flushCards) {
     let topFlushCards = flushCards
       .sort((a, b) => b.value - a.value)
       .slice(0, 5); //get first 5 biggest flush cards
-    if (checkRoyalFlush(topFlushCards)) {
+
+    let royalFlush = checkRoyalFlush(topFlushCards);
+    if (royalFlush) {
       console.log(pokerHands[0], topFlushCards);
-      return pokerHands[0];
+      return [pokerHands[0], royalFlush];
     }
-    if (checkStraight(flushCards)) {
+    let straightFlush = checkStraight(flushCards);
+    if (straightFlush) {
       console.log(pokerHands[1], flushCards);
-      return pokerHands[1];
+      return [pokerHands[1], straightFlush];
     }
     console.log(pokerHands[4], topFlushCards);
-    return pokerHands[4];
+    return [pokerHands[4], topFlushCards];
   }
+  let cardsCount = {};
+  cards.forEach(card => {
+    if (cardsCount[card.value]) {
+      cardsCount[card.value].push(card);
+    } else {
+      cardsCount[card.value] = [card];
+    }
+  });
+  const sortedPairs = Object.values(cardsCount).sort((a, b) => {
+    if (b.length - a.length === 0) {
+      return b[0].value - a[0].value;
+    }
+    return b.length - a.length;
+  });
+  if (sortedPairs[0].length === 4) {
+    console.log(pokerHands[2], sortedPairs[0]);
+    return [pokerHands[2], sortedPairs[0]];
+  } else if (sortedPairs[0].length === 3) {
+    if (sortedPairs[1].length === 2) {
+      console.log(pokerHands[3], [...sortedPairs[0], ...sortedPairs[1]]);
+      return [pokerHands[3], [...sortedPairs[0], ...sortedPairs[1]]];
+    }
+    console.log(pokerHands[6], sortedPairs[0]);
+    return [pokerHands[6], sortedPairs[0]];
+  } else if (sortedPairs[0].length === 2) {
+    if (sortedPairs[1].length === 2) {
+      console.log(pokerHands[7], [...sortedPairs[0], ...sortedPairs[1]]);
+      return [pokerHands[7], [...sortedPairs[0], ...sortedPairs[1]]];
+    }
+    console.log(pokerHands[8], sortedPairs[0]);
+    return [pokerHands[8], sortedPairs[0]];
+  }
+  console.log(pokerHands[9], sortedPairs[0]);
+  return [pokerHands[9], sortedPairs[0]];
+  // let fourOfKing = checkFourOfKind(cards);
+};
+
+export const checkSameCards = cards => {
+  // let cards;
 };
 
 // Check A K 6 5 4 3 2 Flush case
@@ -103,27 +144,34 @@ export const checkAceEqualsOne = cards => {
     let valueA = a.value === 14 ? 1 : a.value;
     return b.value - valueA;
   });
-  let count = 0;
+  let countCards = [];
   for (let i = 0; i < cards.length - 1; i++) {
     let valueI = cards[i].value === 14 ? 1 : cards[i].value;
     let valueI1 = cards[i + 1].value === 14 ? 1 : cards[i + 1].value;
-    count = valueI - valueI1 === 1 ? count + 1 : 0;
+    if (valueI - valueI1 === 1) {
+      countCards.push(cards[i]);
+    } else {
+      countCards = [];
+    }
   }
-  return count >= 4;
+  return countCards.length >= 4 ? countCards : false;
 };
 
 export const checkStraight = cards => {
-  console.log("checkstraight cards", cards);
   cards.sort((a, b) => b.value - a.value);
   // Check A K 6 5 4 3 2 Straight case
   if (cards[0].value === 14 && cards[1].value !== 13 && cards[2].value !== 12) {
     return checkAceEqualsOne(cards);
   }
-  let count = 0;
+  let countCards = [];
   for (let i = 0; i < cards.length - 1; i++) {
-    count = cards[i].value - cards[i + 1].value === 1 ? count + 1 : 0;
+    if (cards[i].value - cards[i + 1].value === 1) {
+      countCards.push(cards[i]);
+    } else {
+      countCards = [];
+    }
   }
-  return count >= 4;
+  return countCards.length >= 4 ? countCards : false;
 };
 
 export const checkRoyalFlush = cards =>
@@ -131,7 +179,9 @@ export const checkRoyalFlush = cards =>
   cards[1].value === 13 &&
   cards[2].value === 12 &&
   cards[3].value === 11 &&
-  cards[4].value === 10;
+  cards[4].value === 10
+    ? cards.slice(0, 5)
+    : false;
 
 export const checkFlush = cards => {
   let suitsCount = {
