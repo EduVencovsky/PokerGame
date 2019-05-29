@@ -2,47 +2,74 @@ import React, { useState, useEffect } from "react";
 import CardDisplay from "../components/Card";
 import io from "socket.io-client";
 
-const socket = io("http://localhost:8080");
+const API = "http://localhost:8080/";
+const socket = io(API);
 
 const playerName = "Edu" + Math.random();
 
 export default function Game() {
   const [playerCards, setPlayerCards] = useState([]);
+  const [table, setTable] = useState([]);
   const [playerId, setPlayerId] = useState(null);
-  const [gameId, setGameId] = useState(null);
-  const handlePlayerId = ({ id }) => setPlayerId(id);
-  const handleGameId = ({ id }) => setGameId(id);
+  const [tableId, setTableId] = useState(null);
+
+  const setCards = ({ cards, tableCards }) => {
+    console.log(cards);
+    console.log(tableCards);
+    setTable(tableCards);
+    setPlayerCards(cards);
+  };
 
   useEffect(() => {
-    socket.emit("playerConnection", { playerName });
-    socket.on("playerId", handlePlayerId);
-    return () => {
-      socket.off("playerId", handlePlayerId);
-    };
+    console.log(JSON.stringify({ playerName }));
+    fetch(API + "joinPlayer", {
+      headers: {
+        "Content-Type": "application/json"
+      },
+      method: "POST",
+      body: JSON.stringify({ playerName })
+    })
+      .then(res => res.json())
+      .then(({ id }) => setPlayerId(id));
   }, []);
 
   useEffect(() => {
     if (playerId) {
-      socket.emit("gameConnection", { playerId });
-      socket.on("gameId", handleGameId);
-      return () => {
-        socket.off("gameId", handleGameId);
-      };
+      fetch(API + "joinTable", {
+        method: "POST",
+        body: JSON.stringify({ playerId }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(({ id }) => setTableId(id));
     }
-  });
+  }, [playerId]);
+
+  useEffect(() => {});
 
   useEffect(() => {
-    socket.on(gameId + "#" + playerId, ({ cards, tableCards }) => {
-      console.log(cards);
-      setPlayerCards(cards);
-    });
-  }, [gameId, playerId]);
+    if (tableId && playerId) {
+      socket.on(playerId, setCards);
+      return () => {
+        socket.off(playerId, setCards);
+      };
+    }
+  }, [tableId, playerId]);
 
   return (
     <div>
+      <h1>Table cards</h1>
+      <div>
+        {table.map(card => (
+          <CardDisplay key={card.display.toString()} card={card} />
+        ))}
+      </div>
+      <h1>Hand cards</h1>
       <div>
         {playerCards.map(card => (
-          <CardDisplay key={card.toString()} card={card} />
+          <CardDisplay key={card.display.toString()} card={card} />
         ))}
       </div>
     </div>
